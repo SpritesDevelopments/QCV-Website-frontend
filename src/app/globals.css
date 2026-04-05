@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+}
+
+body {
+  @apply bg-gray-950 text-gray-100 min-h-screen;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-gray-900;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-700 rounded-full;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  @apply bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-clip-text text-transparent;
+  background-image: var(--gradient-primary);
+}
+
+/* Button styles */
+.btn-primary {
+  @apply px-6 py-2.5 bg-gradient-to-r from-primary-600 to-accent-500 text-white font-semibold rounded-lg
+         hover:from-primary-500 hover:to-accent-400 transition-all duration-200 shadow-lg shadow-primary-900/30;
+}
+
+.btn-secondary {
+  @apply px-6 py-2.5 border border-gray-700 text-gray-300 font-semibold rounded-lg
+         hover:bg-gray-800 hover:border-gray-600 transition-all duration-200;
+}
+
+.btn-danger {
+  @apply px-6 py-2.5 bg-red-600 text-white font-semibold rounded-lg
+         hover:bg-red-500 transition-all duration-200;
+}
+
+/* Form inputs */
+.input-field {
+  @apply w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-100
+         placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+         transition-all duration-200;
+}
+
+.label-field {
+  @apply block text-sm font-medium text-gray-300 mb-1.5;
+}
