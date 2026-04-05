@@ -25,12 +25,12 @@ export default function EditProductPage() {
         setForm({
           name: p.name || '', description: p.description || '',
           price: String(p.price || 0), category: p.category || 'general',
-          tags: (p as Record<string, unknown>).tags as string || '',
-          is_instant_download: !!(p as Record<string, unknown>).is_instant_download,
-          requires_subscription: !!(p as Record<string, unknown>).requires_subscription,
-          subscription_tier: ((p as Record<string, unknown>).subscription_tier as string) || 'basic',
-          is_premium: !!(p as Record<string, unknown>).is_premium,
-          is_hidden: !!(p as Record<string, unknown>).is_hidden,
+          tags: Array.isArray(p.tags) ? p.tags.join(', ') : '',
+          is_instant_download: !!p.is_instant_download,
+          requires_subscription: !!p.requires_subscription,
+          subscription_tier: p.subscription_tier || 'basic',
+          is_premium: !!p.is_premium,
+          is_hidden: !!p.is_hidden,
         });
         setLoaded(true);
       })
@@ -45,7 +45,8 @@ export default function EditProductPage() {
     setError('');
     setSaving(true);
     try {
-      await adminApi.updateProduct(Number(id), token!, { ...form, price: parseFloat(form.price) } as never);
+      const { tags: tagsStr, price: priceStr, ...rest } = form;
+      await adminApi.updateProduct(token!, Number(id), { ...rest, price: parseFloat(priceStr), tags: tagsStr.split(',').map(t => t.trim()).filter(Boolean) });
       router.push('/admin/products');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to update product.');

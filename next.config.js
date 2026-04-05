@@ -8,15 +8,12 @@ const nextConfig = {
         port: '8106',
         pathname: '/api/uploads/**',
       },
-    ],
-  },
-  async rewrites() {
-    return [
       {
-        source: '/api/:path*',
-        destination: 'http://localhost:8106/api/:path*',
+        protocol: 'https',
+        hostname: '**',
+        pathname: '/api/uploads/**',
       },
-    ];
+    ],
   },
 };
 

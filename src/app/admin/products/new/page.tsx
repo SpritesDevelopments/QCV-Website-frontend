@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { admin as adminApi, ApiError } from '@/lib/api';
+import { admin as adminApi, ApiError, type Product } from '@/lib/api';
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -24,7 +24,8 @@ export default function NewProductPage() {
     setError('');
     setSaving(true);
     try {
-      await adminApi.createProduct(token!, { ...form, price: parseFloat(form.price) } as never);
+      const { tags: tagsStr, price: priceStr, ...rest } = form;
+      await adminApi.createProduct(token!, { ...rest, price: parseFloat(priceStr), tags: tagsStr.split(',').map(t => t.trim()).filter(Boolean) });
       router.push('/admin/products');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to create product.');

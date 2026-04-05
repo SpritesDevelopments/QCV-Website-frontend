@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { admin as adminApi, ChatRoom } from '@/lib/api';
+import { admin as adminApi, type ChatRoom } from '@/lib/api';
 import { MessageSquare } from 'lucide-react';
 
 export default function AdminChatsPage() {
@@ -54,10 +54,10 @@ export default function AdminChatsPage() {
                     {c.room_type}
                   </span>
                 </td>
-                <td className="p-4 text-white">{(c as Record<string, unknown>).user_username as string || `User #${c.user_id}`}</td>
+                <td className="p-4 text-white">{c.user?.username || `User #${c.user?.id}`}</td>
                 <td className="p-4">
-                  <span className={`px-2 py-1 rounded text-xs ${c.is_closed ? 'bg-gray-700/50 text-gray-400' : 'bg-green-900/50 text-green-300'}`}>
-                    {c.is_closed ? 'Closed' : 'Open'}
+                  <span className={`px-2 py-1 rounded text-xs ${!c.is_active ? 'bg-gray-700/50 text-gray-400' : 'bg-green-900/50 text-green-300'}`}>
+                    {c.is_active ? 'Open' : 'Closed'}
                   </span>
                 </td>
                 <td className="p-4 text-gray-400">{c.created_at ? new Date(c.created_at).toLocaleDateString() : '-'}</td>

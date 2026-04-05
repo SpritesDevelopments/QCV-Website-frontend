@@ -241,6 +241,7 @@ export interface SubscriptionPlan {
   description: string;
   price: number;
   billing_cycle: string;
+  stripe_price_id: string;
   features: string[];
   max_downloads_per_month: number;
   is_active: boolean;

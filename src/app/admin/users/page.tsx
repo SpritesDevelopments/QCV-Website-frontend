@@ -31,7 +31,7 @@ export default function AdminUsersPage() {
 
   const toggleAdmin = async (userId: number) => {
     try {
-      await adminApi.toggleAdmin(userId, token!);
+      await adminApi.toggleAdmin(token!, userId);
       fetchUsers();
     } catch (err) {
       alert(err instanceof ApiError ? err.message : 'Failed to toggle admin.');
@@ -41,8 +41,8 @@ export default function AdminUsersPage() {
   const resetPassword = async (userId: number) => {
     if (!confirm('Reset this user\'s password?')) return;
     try {
-      const res = await adminApi.resetUserPassword(userId, token!);
-      alert(`New password: ${(res as { new_password: string }).new_password}`);
+      const res = await adminApi.resetUserPassword(token!, userId, { new_password: '' });
+      alert(`Password reset successful. ${(res as { new_password?: string }).new_password ? `New password: ${(res as { new_password?: string }).new_password}` : 'Check email for new password.'}`);
     } catch (err) {
       alert(err instanceof ApiError ? err.message : 'Failed to reset password.');
     }
@@ -51,7 +51,7 @@ export default function AdminUsersPage() {
   const deleteUser = async (userId: number) => {
     if (!confirm('Delete this user permanently?')) return;
     try {
-      await adminApi.deleteUser(userId, token!);
+      await adminApi.deleteUser(token!, userId);
       fetchUsers();
     } catch (err) {
       alert(err instanceof ApiError ? err.message : 'Failed to delete user.');
@@ -89,7 +89,7 @@ export default function AdminUsersPage() {
                     {u.is_admin ? 'Admin' : 'User'}
                   </span>
                 </td>
-                <td className="p-4 text-gray-400">{u.date_joined ? new Date(u.date_joined).toLocaleDateString() : '-'}</td>
+                <td className="p-4 text-gray-400">{u.date_created ? new Date(u.date_created).toLocaleDateString() : '-'}</td>
                 <td className="p-4">
                   <div className="flex gap-2">
                     <button onClick={() => toggleAdmin(u.id)} title={u.is_admin ? 'Remove admin' : 'Make admin'}

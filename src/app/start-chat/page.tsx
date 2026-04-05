@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { chat as chatApi } from '@/lib/api';
 
-export default function StartChatPage() {
+function StartChatForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, token, loading } = useAuth();
@@ -57,5 +57,13 @@ export default function StartChatPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function StartChatPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-16"><div className="text-gray-400">Loading...</div></div>}>
+      <StartChatForm />
+    </Suspense>
   );
 }

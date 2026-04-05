@@ -40,7 +40,7 @@ export default function AdminNotificationsPage() {
     setSaving(true);
     setError('');
     try {
-      await adminApi.createNotification(token!, form as never);
+      await adminApi.createNotification(token!, form);
       setShowForm(false);
       setForm({ title: '', message: '', type: 'info', priority: 'normal', is_global: true, expires_at: '' });
       fetchNotifications();
@@ -53,7 +53,7 @@ export default function AdminNotificationsPage() {
 
   const toggleActive = async (id: number) => {
     try {
-      await adminApi.toggleNotification(id, token!);
+      await adminApi.toggleNotification(token!, id);
       fetchNotifications();
     } catch (err) {
       alert(err instanceof ApiError ? err.message : 'Failed to toggle notification.');
@@ -63,7 +63,7 @@ export default function AdminNotificationsPage() {
   const deleteNotification = async (id: number) => {
     if (!confirm('Delete this notification?')) return;
     try {
-      await adminApi.deleteNotification(id, token!);
+      await adminApi.deleteNotification(token!, id);
       fetchNotifications();
     } catch (err) {
       alert(err instanceof ApiError ? err.message : 'Failed to delete notification.');
@@ -148,16 +148,16 @@ export default function AdminNotificationsPage() {
             ) : notifications.map((n) => (
               <tr key={n.id} className="border-b border-white/5 hover:bg-white/5">
                 <td className="p-4 text-white font-medium">{n.title}</td>
-                <td className="p-4"><span className="px-2 py-1 rounded text-xs bg-blue-900/50 text-blue-300">{(n as Record<string, unknown>).type as string || 'info'}</span></td>
-                <td className="p-4 text-gray-300">{(n as Record<string, unknown>).priority as string || 'normal'}</td>
-                <td className="p-4 text-gray-400">{(n as Record<string, unknown>).is_global ? 'Yes' : 'No'}</td>
-                <td className="p-4 text-gray-400">{(n as Record<string, unknown>).is_active ? 'Yes' : 'No'}</td>
+                <td className="p-4"><span className="px-2 py-1 rounded text-xs bg-blue-900/50 text-blue-300">{n.notification_type || 'info'}</span></td>
+                <td className="p-4 text-gray-300">{n.priority || 'normal'}</td>
+                <td className="p-4 text-gray-400">{n.is_global ? 'Yes' : 'No'}</td>
+                <td className="p-4 text-gray-400">{n.is_active ? 'Yes' : 'No'}</td>
                 <td className="p-4 text-gray-400">{n.created_at ? new Date(n.created_at).toLocaleDateString() : '-'}</td>
                 <td className="p-4">
                   <div className="flex gap-2">
                     <button onClick={() => toggleActive(n.id)} title="Toggle active"
                       className="p-1.5 rounded hover:bg-white/10 text-gray-400 hover:text-purple-400 transition-colors">
-                      {(n as Record<string, unknown>).is_active ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                      {n.is_active ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
                     </button>
                     <button onClick={() => deleteNotification(n.id)} title="Delete"
                       className="p-1.5 rounded hover:bg-white/10 text-gray-400 hover:text-red-400 transition-colors">

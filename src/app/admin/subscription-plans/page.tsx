@@ -46,8 +46,9 @@ export default function AdminSubscriptionPlansPage() {
     setForm({
       name: plan.name, description: plan.description || '',
       price: String(plan.price), billing_cycle: plan.billing_cycle || 'monthly',
-      stripe_price_id: plan.stripe_price_id || '', features: plan.features || '',
-      max_downloads: String((plan as Record<string, unknown>).max_downloads || 50),
+      stripe_price_id: plan.stripe_price_id || '',
+      features: Array.isArray(plan.features) ? plan.features.join('\n') : (plan.features || ''),
+      max_downloads: String(plan.max_downloads_per_month || 50),
     });
     setEditingId(plan.id);
     setShowForm(true);
@@ -57,12 +58,17 @@ export default function AdminSubscriptionPlansPage() {
     e.preventDefault();
     setSaving(true);
     setError('');
-    const payload = { ...form, price: parseFloat(form.price), max_downloads: parseInt(form.max_downloads) };
+    const payload = {
+      ...form,
+      price: parseFloat(form.price),
+      max_downloads: parseInt(form.max_downloads),
+      features: form.features.split('\n').map(f => f.trim()).filter(Boolean),
+    };
     try {
       if (editingId) {
-        await adminApi.updateSubscriptionPlan(editingId, token!, payload as never);
+        await adminApi.updatePlan(token!, editingId, payload);
       } else {
-        await adminApi.createSubscriptionPlan(token!, payload as never);
+        await adminApi.createPlan(token!, payload);
       }
       resetForm();
       fetchPlans();
@@ -75,7 +81,7 @@ export default function AdminSubscriptionPlansPage() {
 
   const toggleActive = async (id: number) => {
     try {
-      await adminApi.toggleSubscriptionPlan(id, token!);
+      await adminApi.togglePlan(token!, id);
       fetchPlans();
     } catch (err) {
       alert(err instanceof ApiError ? err.message : 'Failed to toggle plan.');
@@ -85,7 +91,7 @@ export default function AdminSubscriptionPlansPage() {
   const deletePlan = async (id: number) => {
     if (!confirm('Delete this subscription plan?')) return;
     try {
-      await adminApi.deleteSubscriptionPlan(id, token!);
+      await adminApi.deletePlan(token!, id);
       fetchPlans();
     } catch (err) {
       alert(err instanceof ApiError ? err.message : 'Failed to delete plan.');
@@ -174,7 +180,7 @@ export default function AdminSubscriptionPlansPage() {
                 <td className="p-4 text-white font-medium">{plan.name}</td>
                 <td className="p-4 text-gray-300">£{plan.price}</td>
                 <td className="p-4 text-gray-400">{plan.billing_cycle}</td>
-                <td className="p-4 text-gray-400">{(plan as Record<string, unknown>).max_downloads as number || '-'}</td>
+                <td className="p-4 text-gray-400">{plan.max_downloads_per_month || '-'}</td>
                 <td className="p-4">
                   <span className={`px-2 py-1 rounded text-xs ${plan.is_active ? 'bg-green-900/50 text-green-300' : 'bg-gray-700/50 text-gray-400'}`}>
                     {plan.is_active ? 'Active' : 'Inactive'}
