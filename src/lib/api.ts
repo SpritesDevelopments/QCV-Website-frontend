@@ -117,6 +117,18 @@ export const auth = {
       body: JSON.stringify({ password }),
       token,
     }),
+
+  verifyEmail: (token: string) =>
+    apiFetch<{ message: string; email: string }>('/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    }),
+
+  resendVerification: (email: string) =>
+    apiFetch<{ message: string }>('/auth/resend-verification', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
 };
 
 // ── Products ────────────────────────────────────────────────────────

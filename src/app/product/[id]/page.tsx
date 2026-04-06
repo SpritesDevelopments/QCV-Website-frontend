@@ -40,12 +40,26 @@ export default function ProductPage() {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!token) return;
-    window.open(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/${productId}/download`,
-      '_blank'
-    );
+    try {
+      const res = await fetch(`/api/products/${productId}/download`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Download failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const disposition = res.headers.get('Content-Disposition');
+      a.download = disposition?.match(/filename="?(.+?)"?$/)?.[1] || 'download';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert('Download failed. Please try again.');
+    }
   };
 
   if (loading) {

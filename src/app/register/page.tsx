@@ -26,7 +26,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(username, email, password, confirm);
-      router.push('/account');
+      router.push('/verify-email');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Registration failed.');
     } finally {
